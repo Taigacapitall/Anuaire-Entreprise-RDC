@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Annuaire des entreprises — RDC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0F1214;
+    --bg-2: #14181B;
+    --surface: #1A1F23;
+    --surface-2: #20262A;
+    --border: #2A3136;
+    --border-soft: #232A2E;
+    --copper: #D08A50;
+    --copper-bright: #E8A868;
+    --copper-dim: rgba(208,138,80,0.12);
+    --cobalt: #6FA8D6;
+    --cobalt-dim: rgba(111,168,214,0.12);
+    --verdigris: #6FB89A;
+    --verdigris-dim: rgba(111,184,154,0.14);
+    --danger: #C9776A;
+    --danger-dim: rgba(201,119,106,0.14);
+    --gold: #D4B85A;
+    --gold-dim: rgba(212,184,90,0.14);
+    --text: #EDEAE3;
+    --text-dim: #A3ACB2;
+    --text-faint: #5E6A70;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --serif: 'Fraunces', serif;
+    --body: 'Inter', sans-serif;
+  }
+  *{ box-sizing: border-box; }
+  ::selection{ background: var(--copper-dim); color: var(--copper-bright); }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- texture layer ---------- */
+  .strata{
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+    background:
+      repeating-linear-gradient(180deg, transparent 0 79px, rgba(208,138,80,0.035) 79px 80px),
+      radial-gradient(ellipse 900px 500px at 8% -5%, rgba(208,138,80,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(111,168,214,0.06), transparent 55%);
+  }
+
+  /* ---------- header ---------- */
+  header{
+    position: relative;
+    z-index: 1;
+    padding: 64px 48px 40px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .crest-row{
+    display:flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-size: 11.5px;
+    color: var(--copper-bright);
+    margin: 0 0 18px;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width: 24px; height: 1px;
+    background: var(--copper);
+  }
+  h1{
+    font-family: var(--serif);
+    font-weight: 600;
+    font-optical-sizing: auto;
+    font-size: clamp(34px, 4.4vw, 54px);
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+    margin: 0 0 16px;
+    max-width: 720px;
+  }
+  h1 em{
+    font-style: italic;
+    color: var(--copper-bright);
+  }
+  .subtitle{
+    color: var(--text-dim);
+    font-size: 15.5px;
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 0;
+  }
+
+  .coin{
+    flex-shrink:0;
+    width: 118px; height: 118px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    position: relative;
+    background: radial-gradient(circle at 35% 30%, rgba(208,138,80,0.14), transparent 70%);
+  }
+  .coin::before{
+    content:"";
+    position:absolute; inset: 9px;
+    border: 1px dashed rgba(208,138,80,0.35);
+    border-radius: 50%;
+  }
+  .coin-inner{
+    font-family: var(--mono);
+    text-align:center;
+    line-height: 1.2;
+  }
+  .coin-inner .n{ font-size: 26px; font-weight: 500; color: var(--copper-bright); display:block; }
+  .coin-inner .l{ font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); }
+
+  .stats-row{
+    display:flex;
+    gap: 36px;
+    margin-top: 34px;
+    flex-wrap: wrap;
+    max-width: 1440px;
+    margin-left: auto; margin-right: auto;
+  }
+  .stat{ font-family: var(--mono); }
+  .stat .num{ font-size: 24px; font-weight: 500; color: var(--text); }
+  .stat .num span{ color: var(--copper-bright); }
+  .stat .label{ font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-faint); margin-top: 2px; }
+
+  /* ---------- tabs ---------- */
+  .tabs{
+    display:flex;
+    gap: 6px;
+    max-width: 1440px;
+    margin: 26px auto 0;
+    padding: 0 48px;
+    position: relative;
+    z-index: 1;
+  }
+  .tab-btn{
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--text-faint);
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 9px 16px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    gap: 8px;
+  }
+  .tab-btn:hover{ color: var(--text-dim); }
+  .tab-btn.active{
+    color: var(--copper-bright);
+    background: var(--surface);
+    border-color: var(--border-soft);
+    border-bottom-color: var(--surface);
+  }
+  .tab-btn .tab-count{
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1px 7px;
+    font-size: 10.5px;
+    color: var(--text-dim);
+  }
+  .tab-btn.active .tab-count{ color: var(--copper-bright); border-color: rgba(208,138,80,0.3); }
+  @media (max-width: 720px){ .tabs{ padding: 0 22px; } }
+
+  /* ---------- controls ---------- */
+  main{
+    position: relative; z-index: 1;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 36px 48px 100px;
+  }
+
+  .controls{
+    display:flex;
+    gap: 12px;
+    align-items:center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: linear-gradient(180deg, var(--bg) 78%, transparent);
+    padding: 16px 0 14px;
+    z-index: 5;
+  }
+  .search-wrap{ position: relative; flex: 1; min-width: 260px; }
+  .search-wrap svg{ position:absolute; left:16px; top:50%; transform:translateY(-50%); opacity:0.45; }
+  #search{
+    width:100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 13px 16px 13px 44px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: var(--body);
+    outline:none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  #search:focus{ border-color: var(--copper); box-shadow: 0 0 0 3px var(--copper-dim); }
+  #search::placeholder{ color: var(--text-faint); }
+
+  #sector-select{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 13px 40px 13px 16px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-family: var(--body);
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A3ACB2' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    min-width: 220px;
+  }
+  #sector-select:focus{ border-color: var(--copper); }
+
+  .result-pill{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .result-pill b{ color: var(--copper-bright); font-weight: 500; }
+
+  .icon-btn{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    gap: 7px;
+    white-space: nowrap;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .icon-btn:hover{ border-color: var(--copper); color: var(--copper-bright); }
+
+  /* ---------- sector sections ---------- */
+  .sector-block{ margin-bottom: 6px; }
+  .sector-head{
+    display:flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 20px 4px 12px;
+    border-bottom: 1px solid var(--border-soft);
+    margin-bottom: 2px;
+  }
+  .sector-head .idx{
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .sector-head h2{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--text);
+  }
+  .sector-head .count{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text-faint);
+  }
+
+  .company-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1px;
+    background: var(--border-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+
+  .card{
+    background: var(--surface);
+    padding: 16px 18px;
+    transition: background 0.12s;
+  }
+  .card:hover{ background: var(--surface-2); }
+
+  .card-top{
+    display:flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .card-name{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.005em;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .status-dot{
+    flex-shrink:0;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    margin-top: 5px;
+    background: var(--text-faint);
+  }
+  .status-dot.complete{ background: var(--verdigris); }
+
+  .card-actions{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    flex-shrink:0;
+  }
+  .star-btn{
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    line-height:1;
+    padding: 2px;
+    color: var(--text-faint);
+    opacity: 0.5;
+    transition: opacity 0.12s, transform 0.12s;
+  }
+  .star-btn:hover{ opacity: 1; transform: scale(1.12); }
+  .star-btn.active{ color: var(--gold); opacity: 1; }
+
+  .card.is-target{ background: linear-gradient(180deg, rgba(212,184,90,0.05), var(--surface) 40px); }
+  .card.is-target:hover{ background: linear-gradient(180deg, rgba(212,184,90,0.07), var(--surface-2) 40px); }
+
+  .badge-row{ display:flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 2px; }
+  .badge{
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.03em;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .badge.prio-haute{ color: var(--danger); border-color: rgba(201,119,106,0.35); background: var(--danger-dim); }
+  .badge.prio-moyenne{ color: var(--gold); border-color: rgba(212,184,90,0.35); background: var(--gold-dim); }
+  .badge.prio-basse{ color: var(--verdigris); border-color: rgba(111,184,154,0.35); background: var(--verdigris-dim); }
+  .badge.statut-a_contacter{ color: var(--text-dim); }
+  .badge.statut-contacte{ color: var(--cobalt); border-color: rgba(111,168,214,0.35); background: var(--cobalt-dim); }
+  .badge.statut-relance{ color: var(--copper-bright); border-color: rgba(208,138,80,0.35); background: var(--copper-dim); }
+  .badge.statut-entretien{ color: var(--verdigris); border-color: rgba(111,184,154,0.35); background: var(--verdigris-dim); }
+  .badge.statut-accepte{ color: #0F1214; border-color: var(--verdigris); background: var(--verdigris); }
+  .badge.statut-refuse{ color: var(--danger); border-color: rgba(201,119,106,0.35); background: var(--danger-dim); }
+  .badge.it-oui{ color: var(--cobalt); border-color: rgba(111,168,214,0.35); background: var(--cobalt-dim); }
+
+  .sync-status{
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    margin-left: auto;
+    padding: 2px 4px;
+  }
+  .sync-status .dot{ width:6px; height:6px; border-radius:50%; background: var(--text-faint); flex-shrink:0; }
+  .sync-status.saving .dot{ background: var(--copper-bright); }
+  .sync-status.saved .dot{ background: var(--verdigris); }
+  .sync-status.error .dot{ background: var(--danger); }
+  .sync-status.local .dot{ background: var(--gold); }
+
+  .filter-check{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    border-radius: 10px;
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .filter-check input{ accent-color: var(--cobalt); cursor:pointer; }
+  .filter-check.active{ border-color: var(--cobalt); color: var(--cobalt); }
+
+  .pipeline-toggle{
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    background: none;
+    border: none;
+    border-top: 1px dashed var(--border);
+    padding-top: 9px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+  }
+  .pipeline-toggle:hover{ color: var(--copper-bright); }
+
+  .pipeline-panel{
+    display:none;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .pipeline-panel.open{ display:block; }
+  .pf-row{ display:flex; flex-direction:column; gap: 4px; margin-bottom: 9px; }
+  .pf-row label{
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+  }
+  .pf-row input, .pf-row select, .pf-row textarea{
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 9px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-family: var(--body);
+    outline:none;
+  }
+  .pf-row input:focus, .pf-row select:focus, .pf-row textarea:focus{ border-color: var(--copper); }
+  .pf-row textarea{ resize: vertical; min-height: 46px; font-family: var(--body); }
+  .pf-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+  .pf-saved{
+    font-family: var(--mono);
+    font-size: 9.5px;
+    color: var(--verdigris);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .pf-saved.show{ opacity: 1; }
+
+  .card-rows{ font-size: 12.5px; }
+  .row{
+    display:flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 3px 0;
+    color: var(--text-dim);
+  }
+  .row .k{
+    font-family: var(--mono);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+    width: 44px;
+    flex-shrink:0;
+  }
+  .row a{
+    color: var(--cobalt);
+    text-decoration: none;
+    border-bottom: 1px dotted rgba(111,168,214,0.35);
+    word-break: break-word;
+  }
+  .row a:hover{ border-bottom-style: solid; }
+  .row .empty{ color: var(--text-faint); font-style: italic; }
+
+  #no-results{
+    display:none;
+    padding: 70px 20px;
+    text-align:center;
+    color: var(--text-faint);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+
+  /* ---------- footer / edit guide ---------- */
+  footer{
+    position: relative; z-index: 1;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 20px 48px 70px;
+    color: var(--text-faint);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  footer h2{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text-dim);
+    margin: 44px 0 12px;
+    padding-top: 30px;
+    border-top: 1px solid var(--border-soft);
+  }
+  footer code{
+    font-family: var(--mono);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 5px;
+    color: var(--copper-bright);
+    font-size: 12px;
+  }
+  footer pre{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    overflow-x:auto;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height:1.6;
+  }
+  footer p b{ color: var(--text-dim); font-weight: 500; }
+
+  @media (max-width: 720px){
+    header, main, footer{ padding-left: 22px; padding-right: 22px; }
+    .crest-row{ flex-direction: column; }
+    .coin{ display:none; }
+    .company-grid{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="strata"></div>
+
+<header>
+  <div class="crest-row">
+    <div>
+      <p class="eyebrow">République démocratique du Congo · Katanga & Kinshasa</p>
+      <h1>L'annuaire des entreprises <em>en RDC</em></h1>
+      <p class="subtitle">Une base de contacts pour la recherche d'emploi — mines, énergie, industrie, banques, télécoms, logistique et institutions présentes en République Démocratique du Congo, classées par secteur.</p>
+    </div>
+    <div class="coin">
+      <div class="coin-inner"><span class="n" id="coin-total">0</span><span class="l">Entreprises</span></div>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="num" id="stat-total">0</div><div class="label">Entreprises</div></div>
+    <div class="stat"><div class="num" id="stat-sectors">0</div><div class="label">Secteurs</div></div>
+    <div class="stat"><div class="num" id="stat-complete">0</div><div class="label">Fiches vérifiées</div></div>
+    <div class="stat"><div class="num" id="stat-shown">0</div><div class="label">Affichées</div></div>
+    <div class="stat"><div class="num" id="stat-targets">0</div><div class="label">⭐ Mes cibles</div></div>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" id="tab-annuaire" onclick="switchTab('annuaire')">Annuaire complet <span class="tab-count" id="tab-count-annuaire">0</span></button>
+  <button class="tab-btn" id="tab-cibles" onclick="switchTab('cibles')">⭐ Mes cibles <span class="tab-count" id="tab-count-cibles">0</span></button>
+  <span class="sync-status" id="sync-status"><span class="dot"></span><span id="sync-label">Connexion…</span></span>
+</div>
+
+<main>
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A3ACB2" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search" type="text" placeholder="Rechercher une entreprise, un secteur, une ville…">
+    </div>
+    <select id="sector-select"><option value="">Tous les secteurs</option></select>
+    <label class="filter-check" id="filter-it-label">
+      <input type="checkbox" id="filter-it">💻 Service IT connu
+    </label>
+    <div class="result-pill"><b id="pill-count">0</b> résultat(s)</div>
+    <button class="icon-btn" id="btn-export" title="Sauvegarder tes cibles, statuts et notes dans un fichier">⬇ Exporter</button>
+    <button class="icon-btn" id="btn-import" title="Recharger une sauvegarde précédente">⬆ Importer</button>
+    <input type="file" id="file-import" accept="application/json" style="display:none">
+  </div>
+
+  <div id="content"></div>
+  <div id="no-results">Aucune entreprise ne correspond à cette recherche.</div>
+
+  <footer>
+    <h2>Comment fonctionne le suivi de candidature</h2>
+    <p><b>⭐ Mes cibles</b> — clique l'étoile sur une fiche pour l'ajouter à ton onglet "Mes cibles". Ouvre le panneau <b>Suivi de candidature</b> sur une fiche pour renseigner poste visé, priorité, statut, contacts RH/IT et tes notes. Tout est enregistré automatiquement dans ce navigateur.</p>
+    <p><b>Important — sauvegarde :</b> ces données (cibles, statuts, notes) sont stockées uniquement dans <code>localStorage</code> de ce navigateur — elles ne survivent pas à un changement d'appareil ou de navigateur et peuvent être perdues si tu vides le cache. Utilise le bouton <code>⬇ Exporter</code> régulièrement pour télécharger une sauvegarde JSON, et <code>⬆ Importer</code> pour la recharger (nouvel appareil, nouveau navigateur, ou après un nettoyage de cache).</p>
+    <p>&copy; 2026 SirJosh. Tous droits réservés.</p>
+  </footer>
+</main>
+
+<script>
+
+// ============================================================
+// DONNEES — ajoutez / modifiez / supprimez des entreprises ici
+// ============================================================
+// ============================================================
+// DONNEES — ajoutez / modifiez / supprimez des entreprises ici
+// ============================================================
+const ENTREPRISES = [
+  { nom: 'AATI CATHODE CO., LTD.', secteur: 'Mines & Ressources naturelles', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ABERDARE CABLES', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ACERO BUILDING SYSTEMS', secteur: 'Construction & BTP', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ACTIVA ASSURANCES', secteur: 'Assurances', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ADVANS CONGO', secteur: 'Banques & Finance', site: 'https://www.advanscongo.com', email: '', adresse: 'Avenue Kasai, pres Avenue Ndjamena, Lubumbashi (siege: croisement Av. Kasa-Vubu et Av. 24 Novembre, Bandal, Kinshasa)', telephone: '', linkedin: 'https://www.linkedin.com/company/advans-drc', notes: 'Recherche verifiee' },
+  { nom: 'AECI MINING CHEMICALS', secteur: 'Chimie & Explosifs miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AECI MINING EXPLOSIVES', secteur: 'Chimie & Explosifs miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AFRICA FINANCE CORPORATION', secteur: 'Banques & Finance', site: 'https://www.africafc.org', email: '', adresse: '3a Osborne Road, Ikoyi, Lagos, Nigeria (pas de bureau confirme en RDC - institution panafricaine)', telephone: '', linkedin: 'https://www.linkedin.com/company/africa-finance-corporation', notes: 'Recherche verifiee - siege hors RDC' },
+  { nom: 'AFRICA GLOBAL LOGISTICS (AGL)', secteur: 'Logistique & Transport', site: 'https://www.aglgroup.com', email: 'sales.drc-kinshasa@bollore.com', adresse: '4200 Avenue Bobozo, Gombe, Kinshasa (+ bureau Lubumbashi)', telephone: '+243 995 901 904', linkedin: 'https://www.linkedin.com/company/aglgroup', notes: 'Recherche verifiee' },
+  { nom: 'AFRICA4HER HUB', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AFRICAN INTERIM SERVICES', secteur: 'RH & Recrutement', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AFRICAN MINING MARKET', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AFRICELL RDC SA', secteur: 'Télécoms & Technologies', site: 'https://www.africell.cd', email: 'BSU@africell.cd', adresse: '25, Avenue de la Justice, Quartier Croix-Rouge, Gombe, Kinshasa', telephone: '+243 900 100 606', linkedin: 'https://www.linkedin.com/company/africell', notes: 'Recherche verifiee' },
+  { nom: 'AFRIDEX', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AFRIK INTERIM HR SERVICES', secteur: 'RH & Recrutement', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AFRIK SERVICES CENTRALE D\'ACHATS SARLU', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AFRIHET SARL', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AFRITECH SARL', secteur: 'Télécoms & Technologies', site: 'https://africagrp.com', email: 'info@afritechgroupe.com', adresse: '179 Avenue Kananga, Quartier Biashara, Commune de Dilala, Kolwezi, Lualaba', telephone: '', linkedin: '', notes: 'Attention: plusieurs societes "Afritech" existent en RDC (fournitures minieres a Kolwezi vs solutions IT a Kinshasa) - a verifier avant usage' },
+  { nom: 'AFRIVOLT ENGINEERING S.A.R.L.', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AIGLE COMMUNICATION', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AIRTEL RDC', secteur: 'Télécoms & Technologies', site: 'https://www.airtel.cd', email: '', adresse: '130B, Avenue Kwango, Gombe, Kinshasa', telephone: '+243 99 730 1448', linkedin: 'https://fr.linkedin.com/company/airtel-rdc', notes: 'Recherche verifiee' },
+  { nom: 'AL MABNI SARL', secteur: 'Construction & BTP', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ALB ALIMAS.B S.A.R.L.', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ALENG ELECTRICAL ENGINEERS (PTY) LTD/TMW SARLU', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AMOTECH AFRICA', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ANAPI', secteur: 'Institutions & Organismes', site: 'https://www.investindrc.cd', email: 'anapi@investindrc.cd', adresse: '33C, Croisement Boulevard du 30 Juin et Avenue du Premier Mall, Gombe, Kinshasa', telephone: '+243 999 925 026', linkedin: 'https://www.linkedin.com/company/anapi-rdc', notes: 'Recherche verifiee (agence publique)' },
+  { nom: 'APPLIED ENGINEERING', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AURALIS', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'AUTO UNIQUE', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'BAGS & SACKS KATANGA', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'BANK OF AFRICA (BMCE GROUP)', secteur: 'Banques & Finance', site: 'https://www.boa-rdc.com', email: 'infos@boa-rdc.com', adresse: '22, Avenue des Aviateurs, BP 7119 Kin 1, Kinshasa-Gombe, RDC', telephone: '+243 84 600 0506', linkedin: 'https://www.linkedin.com/company/bank-of-africa-group', notes: 'Recherche verifiee - presence RDC = Kinshasa uniquement' },
+  { nom: 'BARRICK GOLD CORPORATION', secteur: 'Mines & Ressources naturelles', site: 'https://www.barrick.com', email: '', adresse: '4239, Avenue Tombal Baye, 3e etage Immeuble Le Prestige, Commune de la Gombe, Kinshasa (mine Kibali: Watsa, Haut-Uele)', telephone: '+243 812 532 441', linkedin: 'https://www.linkedin.com/company/barrick-gold-corporation', notes: 'Recherche verifiee - opere la mine d\'or Kibali, plus grande d\'Afrique, JV avec AngloGold Ashanti et SOKIMO' },
+  { nom: 'BCNUDH', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'BELGIQUE (AMBASSADE)', secteur: 'Ambassades & Coopération', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'BENSIZWE SARL', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'BHAHAT DIESEL SERVICE LUBUMBASHI', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'BIA GROUP RDC SA', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'BLU ROCK SARL', secteur: 'Mines & Ressources naturelles', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'BLUEFIL', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'BME', secteur: 'Chimie & Explosifs miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'BRANDS REVIEW MAGAZINE', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'BRITISH EMBASSY KINSHASA', secteur: 'Ambassades & Coopération', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'BUSH CAMP SA', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CACFA LIMITED', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CANAL+ RDC', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CARGO CONGO SUPPLY CHAIN SERVICES', secteur: 'Logistique & Transport', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CASTOLIN EUTECTIC', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'C.C.B.C.L', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CENTER FOR INTERNATIONAL PRIVATE ENTERPRISE (CIPE)', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CENTRE MEDICAL DIAMANT', secteur: 'Santé', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CENTUM', secteur: 'Mines & Ressources naturelles', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CENTUM REAL ESTATE', secteur: 'Immobilier', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CHAMBRE DES MINES', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CHINA AFRICA SOURCING', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CIDRA MINERALS PROCESSING', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'COAL CONGOLESE ANALYTICAL LABORATORY', secteur: 'Mines & Ressources naturelles', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'COFFIN TV', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'COMTECH SA', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CONGO BEARING COMPANY', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CONGO ENERGY', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CONGO EQUIPMENT', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CONGO INDUSTRIAL SUPPLIES (CIS)', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CONGO PROFOND', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CONGO SUPPLY & ALL SERVICES', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CONTAINER WORLD', secteur: 'Logistique & Transport', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'COPPER DEVELOPMENT ASSOCIATION AFRICA', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'COPPERBELT ENERGY CORPORATION PLC (CEC)', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'COPPERBELT KATANGA', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'COSTALINA ENERGY', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CRDB BANK DR CONGO SA', secteur: 'Banques & Finance', site: 'https://crdbbank.cd', email: '', adresse: '2e agence: 11599 Boulevard M\'Siri/Luvungi, pres arret Texaco, Lubumbashi (siege social a Lubumbashi, Haut-Katanga)', telephone: '', linkedin: 'https://www.linkedin.com/company/crdb-bank-dr-congo', notes: 'Recherche verifiee - filiale CRDB Bank Plc Tanzanie' },
+  { nom: 'CREAMER MEDIA\'S MINING WEEKLY', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CROSSBOUNDARY ENERGY', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'CSQUARED', secteur: 'Télécoms & Technologies', site: 'https://csquared.com/drc/', email: '', adresse: 'Kinshasa, RDC (licence nationale fibre metropolitaine et FTTx, pas d\'adresse de rue publiee)', telephone: '', linkedin: 'https://www.linkedin.com/company/csquared', notes: 'Recherche verifiee - entreprise panafricaine fibre optique' },
+  { nom: 'DAIKOOL RDC', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'DEV SOLAIRE', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'DIMIEX SARL CONSULTING', secteur: 'Consulting, Audit & Juridique', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'DURA-COAT INDUSTRIAL INC', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'E-LOGIC SARL', secteur: 'Télécoms & Technologies', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ECOBANK', secteur: 'Banques & Finance', site: 'https://ecobank.com', email: 'contact@ecobank.com', adresse: '2, Avenue Kasa-Vubu, croisement Boulevard du 30 Juin, Gombe, Kinshasa', telephone: '+243 996 016 000', linkedin: 'https://fr.linkedin.com/company/ecobank-rdc', notes: 'Recherche verifiee' },
+  { nom: 'ELADA CONSULTING', secteur: 'Consulting, Audit & Juridique', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ELECTRICAL MECHANICAL CONGO ENGINEERING (EMCE SARL)', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'EMERGING BRAND AFRICA', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ENABEL DRC', secteur: 'Ambassades & Coopération', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ENDRESS+HAUSER', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ENTREPRENEUR MAGAZINE', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ENTREPRISE GENERALE DU COBALT (EGC)', secteur: 'Mines & Ressources naturelles', site: 'https://egcobalt.cd', email: 'contact@egcobalt.cd', adresse: 'Immeuble EMM, n412, Avenue Bota, Q. Industriel, Commune de Manika, Kolwezi, Province du Lualaba', telephone: '+243 998 922 849', linkedin: 'https://www.linkedin.com/company/entreprise-generale-du-cobalt', notes: 'Recherche verifiee - filiale Gecamines / agence gouvernementale, partenariat avec Trafigura' },
+  { nom: 'EPIROC DRC', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'EQUITY BCDC', secteur: 'Banques & Finance', site: 'https://equitybcdc.cd', email: '', adresse: 'Immeuble BCDC, Boulevard du 30 Juin, Gombe, Kinshasa', telephone: '+243 818 302 670', linkedin: 'https://www.linkedin.com/company/equitybcdc', notes: 'Recherche verifiee' },
+  { nom: 'ERG AFRICA (EURASIAN RESOURCES GROUP)', secteur: 'Mines & Ressources naturelles', site: 'https://www.ergafrica.com', email: '', adresse: '238 Route Likasi, Commune Annexe, Lubumbashi, Province du Haut-Katanga', telephone: '', linkedin: 'https://za.linkedin.com/company/ergafrica', notes: 'Recherche verifiee - ~3500 employes en Afrique, actifs RDC: Metalkol, Frontier, Boss Mining, COMIDE' },
+  { nom: 'ESI AFRICA', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ETC (THE CHEMICAL ENGINEER)', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ETG CURECHEM CONGO SARLU', secteur: 'Chimie & Explosifs miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'FEDERATION DES ENTREPRISES DU CONGO (FEC)', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'FICIELLE SARL', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'FIRST AFRICA GUIDE MAGAZINE', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'FIRST MINING', secteur: 'Mines & Ressources naturelles', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'FIRSTBANK', secteur: 'Banques & Finance', site: 'https://www.fbnbankrdc.com', email: 'contact@fbnbankrdc.com', adresse: 'Plus de 40 agences en RDC dont 15 a Kinshasa (adresse siege non precisee - filiale First Bank of Nigeria)', telephone: '+243 81 555 8858', linkedin: 'https://cd.linkedin.com/company/firstbankdrc', notes: 'Recherche verifiee' },
+  { nom: 'FONAREP / FONAREV', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'FONDS DE PROMOTION DE L\'INDUSTRIE (FPI)', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'FPM', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'GALLAGHER SECURITY', secteur: 'Sécurité', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'GARDAWORLD SECURITY', secteur: 'Sécurité', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'GECAMINES', secteur: 'Mines & Ressources naturelles', site: 'https://gecamines.cd', email: 'info@gecamines.cd', adresse: '419, Boulevard Kamanyola, Lubumbashi', telephone: '+243 970 053 195', linkedin: 'https://cd.linkedin.com/company/gecamines', notes: 'Recherche verifiee' },
+  { nom: 'GLENCORE', secteur: 'Mines & Ressources naturelles', site: 'https://www.glencore.cd', email: '', adresse: 'Immeuble Petit Pont, 123A Avenue de la Justice, Commune de la Gombe, Kinshasa (+ bureaux Lubumbashi, sites industriels a Kolwezi/Lualaba via KCC et MUMI)', telephone: '', linkedin: 'https://www.linkedin.com/company/glencore', notes: 'Recherche verifiee - ~15000 employes RDC. Conflit fiscal actif avec l\'Etat congolais (2026)' },
+  { nom: 'GLOBAL BUSINESS REPORTS (GBR)', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'GLORHIS MULTI SERVICES', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'GOSHOP ENERGY', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'GREEN WORLD ENERGIE SARL', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'GREENRO SOLUTIONS', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'GROUPE TIA', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'HERBERT SMITH FREEHILLS KRAMER', secteur: 'Consulting, Audit & Juridique', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'HITACHI CONSTRUCTION MACHINERY AFRICA', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'HYDRAFORM INTERNATIONAL', secteur: 'Construction & BTP', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'HYDRAULIC ENGINEERING SARL', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'HYTERA COMMUNICATIONS CORPORATION LIMITED', secteur: 'Télécoms & Technologies', site: 'https://www.hytera.com', email: 'service@hytera.com', adresse: 'Siege Shenzhen, Chine - pas de bureau local confirme en RDC (fournisseur equipements radio)', telephone: '', linkedin: 'https://www.linkedin.com/company/hytera', notes: 'Recherche verifiee - pas de presence RDC confirmee' },
+  { nom: 'HYUNDAI EVERDIGM CORP.', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ILUAN', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'IMMOROSE', secteur: 'Immobilier', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'IMPERIAL CROWN MEDIA / SARL', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'INPP', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'INTER ORIENTAL BUILDERS (IOB-SARL)', secteur: 'Construction & BTP', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'INTERNATIONAL BUSINESS MAGAZINE', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'INTERNATIONAL FACILITIES SERVICES (IFS)', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'INVEST CONGO MINING SARL', secteur: 'Mines & Ressources naturelles', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'IPS-CO SARL', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'IRBIUM', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ITALIAN TRADE AGENCY', secteur: 'Ambassades & Coopération', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ITM AFRICA', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'JAMA ENGINEERING SARLU', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'JEUNE AFRIQUE', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'JTPCC', secteur: 'Mines & Ressources naturelles', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'KAINGRO SARL', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'KAMOA COPPER', secteur: 'Mines & Ressources naturelles', site: 'https://www.kamoacopper.com', email: '', adresse: 'Site de Kamoa, Territoire de Mutshatsha, Province du Lualaba (pres de Kolwezi)', telephone: '', linkedin: 'https://www.linkedin.com/company/ivanhoe-mines', notes: 'Recherche verifiee' },
+  { nom: 'KAMOTO COPPER COMPANY (KCC)', secteur: 'Mines & Ressources naturelles', site: 'https://www.kamotocoppercompany.com', email: '', adresse: 'Kolwezi, Province du Lualaba, RDC (co-entreprise Glencore 70% / Gecamines 25% / Etat RDC 5%)', telephone: '', linkedin: 'https://www.linkedin.com/company/kamoto-copper-company', notes: 'Recherche verifiee - bureaux scelles par le fisc congolais en 2026 (litige fiscal en cours)' },
+  { nom: 'KIND RISE SA', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'KISWISHI CITY', secteur: 'Immobilier', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'KNIGHT PIESOLD CONSULTING', secteur: 'Consulting, Audit & Juridique', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'KOBOLD METALS', secteur: 'Mines & Ressources naturelles', site: 'https://koboldmetals.com', email: '', adresse: 'Bureau KoBold DRC, Lubumbashi (nouvellement ouvert, ~100km au nord du site Mingomba en Zambie)', telephone: '', linkedin: 'https://www.linkedin.com/company/kobold-metals', notes: 'Recherche verifiee - societe US d\'exploration miniere basee sur l\'IA (lithium, cuivre, cobalt)' },
+  { nom: 'KPMG RDC', secteur: 'Consulting, Audit & Juridique', site: 'https://kpmg.com/cd', email: 'CD-Recrutement@kpmg.com', adresse: '14 Bd du 30 Juin, Immeuble Equity BCDC, 7e etage, Gombe, Kinshasa', telephone: '+243 828 504 987', linkedin: 'https://www.linkedin.com/company/kpmg-rdc', notes: 'Recherche verifiee' },
+  { nom: 'LA CASA', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'LA CONGOLAISE DE CONSTRUCTION', secteur: 'Construction & BTP', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'LA ROSETTE', secteur: 'Immobilier', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'LAFRICAMOBILE', secteur: 'Télécoms & Technologies', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'LEDYA OIL AND GAS DS', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'LE PROFIL', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'LEPOTENTIEL', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'LIBERTY MA MAISON', secteur: 'Immobilier', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'LIFE TV', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'LIME CO RESOURCES LIMITED', secteur: 'Mines & Ressources naturelles', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'LIQUID INTELLIGENT TECHNOLOGIES', secteur: 'Télécoms & Technologies', site: 'https://cd.liquid.tech', email: '', adresse: 'Immeuble 1113, Boulevard du 30 Juin, Kinshasa', telephone: '', linkedin: 'https://www.linkedin.com/company/liquid-intelligent-technologies', notes: 'Recherche verifiee - business de Cassava Technologies, infra fibre/datacenter/cloud' },
+  { nom: 'LUXOS RDC', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MACHINE CUTTING SERVICES OPERATIONS', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MALABAR GROUP', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MASIMO CHEMICALS SOUTH AFRICA (PTY) LTD', secteur: 'Chimie & Explosifs miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MBOTE.CD', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MCC REALTY', secteur: 'Immobilier', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MD SERVICES', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MEALIE BRAND', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MICROTEX', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MINELAB', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MINES.CD', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MINING & CONSTRUCTION NEWS', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MINING AFRICA MAGAZINE', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MINING ENGINEERING SERVICES', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MINING INDUSTRY PROFESSIONALS', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MINING NEWS MAGAZINE', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MINING ZIMBABWE', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MINISTERE DES MINES', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MINT SURVEY', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MIREILLE VENTURES', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MITRA SK', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MMG KINSEVERE', secteur: 'Mines & Ressources naturelles', site: 'https://www.mmg.com/operations/kinsevere/', email: 'drc.administration@mmg.com', adresse: '7409 Avenue de la Revolution, Lubumbashi, Katanga', telephone: '+243 817 108 143', linkedin: 'https://www.linkedin.com/company/mmg-limited', notes: 'Recherche verifiee - mine a 30km de Lubumbashi, ~859 employes' },
+  { nom: 'MODERN CONSTRUCTION CONGO (MC CONGO)', secteur: 'Construction & BTP', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MORCO SERVICES', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MOUNTAIN GROUP', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MSK TESTING & INSPECTION', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MULTI PACKAGING CONGO', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MULMI', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MUMANT JET', secteur: 'Logistique & Transport', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'MUTANDA MINING SARL (MUMI)', secteur: 'Mines & Ressources naturelles', site: 'https://www.mutandamining.com', email: 'codeofconduct@glencore.com', adresse: '4746, Avenue Laurent Desire Kabila, Mutoshi, Commune de Manika, Kolwezi', telephone: '', linkedin: 'https://cd.linkedin.com/company/mutanda-mining-sarl', notes: 'Recherche verifiee (filiale Glencore)' },
+  { nom: 'NEELKANTH GROUP', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'NEMCHEM INTERNATIONAL', secteur: 'Chimie & Explosifs miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'NEPTUNE WORLD GROUP', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'NICE CREATIVE AGENCY', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'NOKTA DETECTION TECHNOLOGIES', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'NORMET DRC', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'OMEXOM', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ORDRE NATIONAL DES EXPERTS-COMPTABLES (ONEC)', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'OPTIMUM', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ORANGE RDC', secteur: 'Télécoms & Technologies', site: 'https://www.orange.cd', email: '1999.info@orange.com', adresse: '372, Avenue Colonel Mondjiba, Ngaliema, Kinshasa', telephone: '+243 84 000 1777', linkedin: 'https://www.linkedin.com/company/orange-rdc', notes: 'Recherche verifiee' },
+  { nom: 'PACIFIQUE HANPEI', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'PANACO SARL', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'PANAFRIQUE MOTORS SARL', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'PENTHOL SA', secteur: 'Chimie & Explosifs miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'PETROPIPE', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'PINNACLE WELDING AND SAFETY', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'PLATINUM BOUTIQUE', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'PMJ SERVICES SARL', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'POLY-GIL HEAT-PROOFING', secteur: 'Construction & BTP', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'POLY-FIL', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'POWERGEN', secteur: 'Énergie', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'PPC BARNET DRC MANUFACTORY SA', secteur: 'Construction & BTP', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'PRD RIGS', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'PROBIDIMEX (CEMENT & CONCRETE ADMIXTURES)', secteur: 'Construction & BTP', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'PROFESSIONAL COMMISSION OF WOMEN ENTREPRENEURS (CPFE) HAUT-KATANGA', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'PROPLASTICS LIMITED', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'QANCHIS DRC SARL', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'RAW BANK', secteur: 'Banques & Finance', site: 'https://rawbank.com', email: 'contact@rawbank.cd', adresse: 'Avenue Lukusa 66, Gombe, Kinshasa', telephone: '+243 996 016 300', linkedin: 'https://cd.linkedin.com/company/rawbank', notes: 'Recherche verifiee' },
+  { nom: 'RAWSURE', secteur: 'Assurances', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'RUBATEK SARL', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SA MINING MAGAZINE', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SADC MINING & CONSTRUCTION NEWS', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SAFRICODE RDC', secteur: 'Télécoms & Technologies', site: '', email: '', adresse: 'Le Prestige Building, No.4239 Avenue Tabu Ley Rochereau, Kinshasa', telephone: '', linkedin: '', notes: 'Recherche partielle - classee construction dans certains annuaires, pas de site officiel trouve' },
+  { nom: 'SECURICO SARL', secteur: 'Sécurité', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SEGUCE RDC', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SERVICES MACHINERY TRUCKS (SMT)', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SERVTEC INTERNATIONAL GROUP', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SHANGAI METALS MARKET', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SICODEX', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SILO CONGO', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SKAIS SARL', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SOCIETE DES MICROCREDITS CONGOLAIS (SMICO)', secteur: 'Banques & Finance', site: 'https://www.smico.net', email: '', adresse: 'Siege: 020 Avenue Vanny Bishweka, Q. Les Volcans, Goma, Nord-Kivu (10 agences dont Lubumbashi et Likasi)', telephone: '', linkedin: '', notes: 'Recherche verifiee - presente a Lubumbashi, pas de LinkedIn officiel trouve' },
+  { nom: 'SOFIBANQUE', secteur: 'Banques & Finance', site: 'https://sofibanque.com', email: '', adresse: '4258, Avenue Kabasele Tshamala, Commune de la Gombe, Kinshasa (+ agence Lubumbashi: 18 avenue Luvua, croisement Kambove)', telephone: '+243 817 300 200', linkedin: 'https://cd.linkedin.com/company/sofibanquesa', notes: 'Recherche verifiee - presente a Lubumbashi' },
+  { nom: 'SOLIDAIRE BANQUE', secteur: 'Banques & Finance', site: 'https://www.solidairebanque.com', email: '', adresse: 'Siege social a Kinshasa, RDC (plusieurs agences: Kinkole, Route Matadi, Marche Malongo)', telephone: '', linkedin: '', notes: 'Recherche verifiee - pas de LinkedIn officiel trouve' },
+  { nom: 'SOTRAFER (SOCIETE DE TRANSFORMATION DE FER)', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SOUTRAFER SARL', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SOUTH AFRICAN AIRWAYS', secteur: 'Logistique & Transport', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SOYONS CLAIRS TV INTERNATIONAL', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SPECTRO AMETEK', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SRK CONSULTING', secteur: 'Consulting, Audit & Juridique', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'STANDARD BANK RDC S.A. (STANBIC)', secteur: 'Banques & Finance', site: 'https://www.standardbank.cd', email: '', adresse: '12, Avenue de la Mongala, Gombe, Kinshasa', telephone: '+243 99 606 0060', linkedin: 'https://www.linkedin.com/company/standard-bank', notes: 'Recherche verifiee' },
+  { nom: 'STI S.A.S', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'SULZER', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'TAE SAS', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'TELURIC HOLDINGS SARL', secteur: 'Mines & Ressources naturelles', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'TENKE FUNGURUME MINING', secteur: 'Mines & Ressources naturelles', site: 'https://www.tfmofficial.com', email: 'recrutement@tfm.cmoc.com', adresse: 'Route de l\'Aeroport de la Luano, Luano City, Lubumbashi (+ site Fungurume, Lualaba)', telephone: '', linkedin: 'https://www.linkedin.com/company/tenke-fungurume-mining', notes: 'Recherche verifiee (filiale CMOC)' },
+  { nom: 'THE AFRICA REPORT', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'THE BIG 4K SARL', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'THE GERMAN COOPERATION', secteur: 'Ambassades & Coopération', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'THE SWEDISH EMBASSY OF KINSHASA', secteur: 'Ambassades & Coopération', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'THIERMAR SARL', secteur: 'Logistique & Transport', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'TITAN WORKWEAR', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'TOTALENERGIES MARKETING RDC', secteur: 'Énergie', site: 'https://totalenergies.cd', email: '', adresse: '24, Av. Cadeco (Place des Evolues), Gombe, Kinshasa', telephone: '+243 857 111 111', linkedin: 'https://www.linkedin.com/company/totalenergies', notes: 'Recherche verifiee' },
+  { nom: 'TRACTAFRIC EQUIPMENT', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'TRADESERVICE', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'TRAFIGURA', secteur: 'Mines & Ressources naturelles', site: 'https://www.trafigura.com', email: 'media@trafigura.com', adresse: 'Pas de bureau RDC confirme - opere via partenariats (EGC, Glencore) depuis Geneve/Singapour', telephone: '+41 22 592 4528', linkedin: 'https://www.linkedin.com/company/trafigura', notes: 'Recherche verifiee - negociant en matieres premieres, presence RDC via contrats plutot que bureau local' },
+  { nom: 'TRONIC ELECTRICAL', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'TRUST EYE VISION', secteur: 'Santé', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'UD TRUCKS DRC / PARAMOUNT MOTORS', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'UNION AFRICAINE DE COMMERCE SARL (UAC)', secteur: 'Commerce & Distribution', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'UNITED BANK OF AFRICA (UBA RDC)', secteur: 'Banques & Finance', site: 'https://www.ubagroup.com', email: '', adresse: '1853, Avenue de la Liberation, Commune de la Gombe, Kinshasa, RDC', telephone: '+243 996 020 064', linkedin: 'https://www.linkedin.com/company/uba-group', notes: 'Recherche verifiee - filiale groupe nigerian UBA' },
+  { nom: 'UNITED SA', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'UNITY BEVERAGE', secteur: 'Industrie & Biens de consommation', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'VIRGAGENCY', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'VODACOM RDC', secteur: 'Télécoms & Technologies', site: 'https://www.vodacom.cd', email: '', adresse: '292 Avenue de la Justice, Gombe, Kinshasa', telephone: '+243 81 313 1000', linkedin: 'https://cd.linkedin.com/company/vodacom-rdc', notes: 'Recherche verifiee' },
+  { nom: 'VOLTEX SARL', secteur: 'Équipements & Services industriels', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'WINK COMPANY', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'XCALIBUR SMART MAPPING', secteur: 'Équipements & Services miniers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'YASO MAGAZINE', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ZAMBIA MINE SAFETY', secteur: 'Sécurité', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ZEBRA GROUP SARL', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ZEMA ENTERPRISES', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ZIMA TRADE / ZIMTRADE (ZIMBABWEAN PAVILLION)', secteur: 'Institutions & Organismes', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ZONGO', secteur: 'Services divers', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' },
+  { nom: 'ZOOM ECO', secteur: 'Médias & Publications', site: '', email: '', adresse: '', telephone: '', linkedin: '', notes: '' }
+];
+
+// ============================================================
+// ORDRE D'AFFICHAGE DES SECTEURS
+// ============================================================
+const SECTOR_ORDER = [
+  "Mines & Ressources naturelles",
+  "Équipements & Services miniers",
+  "Équipements & Services industriels",
+  "Chimie & Explosifs miniers",
+  "Énergie",
+  "Construction & BTP",
+  "Immobilier",
+  "Banques & Finance",
+  "Assurances",
+  "Télécoms & Technologies",
+  "Logistique & Transport",
+  "Sécurité",
+  "Consulting, Audit & Juridique",
+  "RH & Recrutement",
+  "Commerce & Distribution",
+  "Industrie & Biens de consommation",
+  "Santé",
+  "Médias & Publications",
+  "Institutions & Organismes",
+  "Ambassades & Coopération",
+  "Services divers"
+];
+
+// ============================================================
+// CRM PERSONNEL — cibles, statut de candidature, notes
+// Stocké dans Netlify Blobs via une fonction serverless, pour
+// que tes données persistent au-delà de ce navigateur/appareil.
+// Repli automatique sur localStorage si la fonction est
+// indisponible (ex: si tu ouvres ce fichier en local sans
+// `netlify dev`, ou hors ligne).
+// ============================================================
+const CRM_API = '/.netlify/functions/crm';
+const CRM_LOCAL_KEY = 'annuaire_crm_v1';
+let storageMode = 'blobs'; // 'blobs' | 'local'
+let saveInFlight = null;
+let savePending = false;
+
+function setSyncStatus(state, label){
+  syncStatus.className = 'sync-status ' + state;
+  syncLabel.textContent = label;
+}
+
+async function loadCRM(){
+  setSyncStatus('saving', 'Connexion à Netlify Blobs…');
+  try{
+    const res = await fetch(CRM_API, { method: 'GET' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    storageMode = 'blobs';
+    setSyncStatus('saved', 'Synchronisé (Netlify Blobs)');
+    return data && typeof data === 'object' ? data : {};
+  }catch(err){
+    console.warn('Netlify Blobs indisponible, repli sur ce navigateur.', err);
+    storageMode = 'local';
+    setSyncStatus('local', 'Stockage local (hors ligne)');
+    try{
+      const raw = localStorage.getItem(CRM_LOCAL_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }catch(e2){ return {}; }
+  }
+}
+
+async function saveCRM(){
+  if(storageMode === 'local'){
+    try{
+      localStorage.setItem(CRM_LOCAL_KEY, JSON.stringify(crm));
+      setSyncStatus('local', 'Stockage local (hors ligne)');
+    }catch(err){
+      setSyncStatus('error', "Erreur d'enregistrement local");
+    }
+    return;
+  }
+  // Une seule sauvegarde réseau à la fois ; si une autre arrive pendant
+  // l'envoi, on la rejoue une fois la première terminée.
+  if(saveInFlight){ savePending = true; return; }
+  setSyncStatus('saving', 'Enregistrement…');
+  saveInFlight = fetch(CRM_API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(crm)
+  }).then(res => {
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    setSyncStatus('saved', 'Synchronisé (Netlify Blobs)');
+  }).catch(err => {
+    console.error('Erreur de sauvegarde Netlify Blobs', err);
+    try{ localStorage.setItem(CRM_LOCAL_KEY, JSON.stringify(crm)); }catch(e2){}
+    setSyncStatus('error', 'Échec — copie gardée en local');
+  }).finally(() => {
+    saveInFlight = null;
+    if(savePending){ savePending = false; saveCRM(); }
+  });
+}
+
+function getCRM(id){
+  return crm[id] || {};
+}
+function setCRM(id, patch){
+  crm[id] = Object.assign({}, crm[id] || {}, patch);
+  saveCRM();
+}
+
+let crm = {};
+let currentTab = 'annuaire';
+
+// Identifiant stable par entreprise (index de tableau — ne pas réordonner ENTREPRISES sans précaution)
+ENTREPRISES.forEach((e,i) => { e._id = i; });
+
+const PRIORITE_LABELS = { haute: '🔴 Haute', moyenne: '🟡 Moyenne', basse: '🟢 Basse' };
+const STATUT_LABELS = {
+  a_contacter: 'À contacter',
+  contacte: 'Contacté(e)',
+  relance: 'Relance envoyée',
+  entretien: 'Entretien',
+  accepte: 'Accepté(e) 🎉',
+  refuse: 'Refusé(e)'
+};
+const STATUT_GROUP_ORDER = ['a_contacter','contacte','relance','entretien','accepte','refuse','_sans_statut'];
+const PRIORITE_SORT = { haute: 0, moyenne: 1, basse: 2 };
+const DEPT_IT_LABELS = { oui: '✅ Oui', non: '❌ Non', inconnu: '❔ Inconnu' };
+
+const content = document.getElementById('content');
+const searchInput = document.getElementById('search');
+const sectorSelect = document.getElementById('sector-select');
+const noResults = document.getElementById('no-results');
+const statTotal = document.getElementById('stat-total');
+const statSectors = document.getElementById('stat-sectors');
+const statComplete = document.getElementById('stat-complete');
+const statShown = document.getElementById('stat-shown');
+const statTargets = document.getElementById('stat-targets');
+const pillCount = document.getElementById('pill-count');
+const coinTotal = document.getElementById('coin-total');
+const tabAnnuaireBtn = document.getElementById('tab-annuaire');
+const tabCiblesBtn = document.getElementById('tab-cibles');
+const tabCountAnnuaire = document.getElementById('tab-count-annuaire');
+const tabCountCibles = document.getElementById('tab-count-cibles');
+const filterIT = document.getElementById('filter-it');
+const filterITLabel = document.getElementById('filter-it-label');
+const syncStatus = document.getElementById('sync-status');
+const syncLabel = document.getElementById('sync-label');
+
+function isComplete(e){
+  return !!(e.site && e.adresse);
+}
+function countTargets(){
+  return Object.values(crm).filter(c => c.isTarget).length;
+}
+
+function linkField(value){
+  if(!value || !value.trim()) return '<span class="empty">à compléter</span>';
+  let href = value.trim();
+  if(!/^https?:\/\//i.test(href)) href = 'https://' + href;
+  return '<a href="' + href.replace(/"/g,'') + '" target="_blank" rel="noopener">' + value + '</a>';
+}
+function mailField(value){
+  if(!value || !value.trim()) return '<span class="empty">à compléter</span>';
+  return '<a href="mailto:' + value.replace(/"/g,'') + '">' + value + '</a>';
+}
+function textField(value){
+  if(!value || !value.trim()) return '<span class="empty">à compléter</span>';
+  return value;
+}
+
+function esc(v){
+  return (v || '').toString().replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+
+function selectOptions(map, current){
+  let html = '<option value="">—</option>';
+  Object.keys(map).forEach(k => {
+    html += '<option value="' + k + '"' + (current === k ? ' selected' : '') + '>' + map[k] + '</option>';
+  });
+  return html;
+}
+
+function badgeRowHTML(c){
+  let badges = '';
+  if(c.priorite) badges += '<span class="badge prio-' + c.priorite + '">' + PRIORITE_LABELS[c.priorite] + '</span>';
+  if(c.statut) badges += '<span class="badge statut-' + c.statut + '">' + STATUT_LABELS[c.statut] + '</span>';
+  if(c.departementIT === 'oui') badges += '<span class="badge it-oui">💻 Service IT</span>';
+  return badges ? '<div class="badge-row">' + badges + '</div>' : '';
+}
+
+function pipelinePanelHTML(e, c){
+  return '<div class="pipeline-panel" id="panel-' + e._id + '">' +
+    '<div class="pf-grid">' +
+      '<div class="pf-row"><label>Poste visé</label><input type="text" data-field="posteVise" data-id="' + e._id + '" value="' + esc(c.posteVise) + '" placeholder="ex. IT Support"></div>' +
+      '<div class="pf-row"><label>Priorité</label><select data-field="priorite" data-id="' + e._id + '">' + selectOptions(PRIORITE_LABELS, c.priorite) + '</select></div>' +
+      '<div class="pf-row"><label>Statut candidature</label><select data-field="statut" data-id="' + e._id + '">' + selectOptions(STATUT_LABELS, c.statut) + '</select></div>' +
+      '<div class="pf-row"><label>Département IT</label><select data-field="departementIT" data-id="' + e._id + '">' + selectOptions(DEPT_IT_LABELS, c.departementIT) + '</select></div>' +
+      '<div class="pf-row"><label>Ville</label><input type="text" data-field="ville" data-id="' + e._id + '" value="' + esc(c.ville) + '" placeholder="ex. Lubumbashi"></div>' +
+      '<div class="pf-row"><label>Contact IT</label><input type="text" data-field="contactIT" data-id="' + e._id + '" value="' + esc(c.contactIT) + '" placeholder="Nom, email ou tél."></div>' +
+      '<div class="pf-row"><label>Contact RH</label><input type="text" data-field="contactRH" data-id="' + e._id + '" value="' + esc(c.contactRH) + '" placeholder="Nom, email ou tél."></div>' +
+      '<div class="pf-row"><label>Date candidature</label><input type="date" data-field="dateCandidature" data-id="' + e._id + '" value="' + esc(c.dateCandidature) + '"></div>' +
+      '<div class="pf-row"><label>Date de relance</label><input type="date" data-field="dateRelance" data-id="' + e._id + '" value="' + esc(c.dateRelance) + '"></div>' +
+    '</div>' +
+    '<div class="pf-row"><label>Notes personnelles</label><textarea data-field="notesPerso" data-id="' + e._id + '" placeholder="Ce que tu sais, qui contacter, comment approcher…">' + esc(c.notesPerso) + '</textarea></div>' +
+    '<span class="pf-saved" id="saved-' + e._id + '">Enregistré ✓</span>' +
+  '</div>';
+}
+
+function cardHTML(e){
+  const c = getCRM(e._id);
+  const isTarget = !!c.isTarget;
+  return '<div class="card' + (isTarget ? ' is-target' : '') + '" data-card-id="' + e._id + '">' +
+    '<div class="card-top"><div class="card-name">' + e.nom + '</div>' +
+    '<div class="card-actions">' +
+      '<button class="star-btn' + (isTarget ? ' active' : '') + '" data-star-id="' + e._id + '" title="' + (isTarget ? 'Retirer de mes cibles' : 'Ajouter à mes cibles') + '">' + (isTarget ? '★' : '☆') + '</button>' +
+      '<div class="status-dot' + (isComplete(e) ? ' complete' : '') + '"></div>' +
+    '</div></div>' +
+    badgeRowHTML(c) +
+    '<div class="card-rows">' +
+      '<div class="row"><span class="k">Site</span>' + linkField(e.site) + '</div>' +
+      '<div class="row"><span class="k">Email</span>' + mailField(e.email) + '</div>' +
+      '<div class="row"><span class="k">Adresse</span>' + textField(e.adresse) + '</div>' +
+      '<div class="row"><span class="k">Tél</span>' + textField(e.telephone) + '</div>' +
+      '<div class="row"><span class="k">LinkedIn</span>' + linkField(e.linkedin) + '</div>' +
+    '</div>' +
+    '<button class="pipeline-toggle" data-toggle-id="' + e._id + '">Suivi de candidature ▾</button>' +
+    pipelinePanelHTML(e, c) +
+  '</div>';
+}
+
+function groupBySector(list){
+  const map = {};
+  list.forEach(e => {
+    const s = e.secteur || 'Services divers';
+    if(!map[s]) map[s] = [];
+    map[s].push(e);
+  });
+  return map;
+}
+
+function groupByStatut(list){
+  const map = {};
+  list.forEach(e => {
+    const c = getCRM(e._id);
+    const s = c.statut || '_sans_statut';
+    if(!map[s]) map[s] = [];
+    map[s].push(e);
+  });
+  return map;
+}
+
+function renderSectorView(list){
+  const grouped = groupBySector(list);
+  const orderedKeys = SECTOR_ORDER.filter(s => grouped[s]).concat(
+    Object.keys(grouped).filter(s => !SECTOR_ORDER.includes(s))
+  );
+
+  let html = '';
+  let idx = 0;
+  orderedKeys.forEach(sector => {
+    idx++;
+    const items = grouped[sector].slice().sort((a,b) => a.nom.localeCompare(b.nom));
+    html += '<div class="sector-block">' +
+      '<div class="sector-head"><span class="idx">' + String(idx).padStart(2,'0') + '</span>' +
+      '<h2>' + sector + '</h2><span class="count">' + items.length + ' entreprise' + (items.length>1?'s':'') + '</span></div>' +
+      '<div class="company-grid">' + items.map(cardHTML).join('') + '</div>' +
+    '</div>';
+  });
+  return html;
+}
+
+function renderCiblesView(list){
+  if(!list.length) return '';
+  const grouped = groupByStatut(list);
+  let html = '';
+  let idx = 0;
+  STATUT_GROUP_ORDER.forEach(key => {
+    if(!grouped[key]) return;
+    idx++;
+    const label = key === '_sans_statut' ? 'Sans statut' : STATUT_LABELS[key];
+    const items = grouped[key].slice().sort((a,b) => {
+      const pa = PRIORITE_SORT[(getCRM(a._id).priorite)] ?? 3;
+      const pb = PRIORITE_SORT[(getCRM(b._id).priorite)] ?? 3;
+      if(pa !== pb) return pa - pb;
+      return a.nom.localeCompare(b.nom);
+    });
+    html += '<div class="sector-block">' +
+      '<div class="sector-head"><span class="idx">' + String(idx).padStart(2,'0') + '</span>' +
+      '<h2>' + label + '</h2><span class="count">' + items.length + ' entreprise' + (items.length>1?'s':'') + '</span></div>' +
+      '<div class="company-grid">' + items.map(cardHTML).join('') + '</div>' +
+    '</div>';
+  });
+  return html;
+}
+
+function render(list){
+  const html = currentTab === 'cibles' ? renderCiblesView(list) : renderSectorView(list);
+  content.innerHTML = html;
+  noResults.style.display = list.length ? 'none' : 'block';
+  if(currentTab === 'cibles' && !list.length){
+    noResults.textContent = "Aucune entreprise dans tes cibles pour l'instant. Clique sur ☆ sur une entreprise pour l'ajouter.";
+  } else {
+    noResults.textContent = 'Aucune entreprise ne correspond à cette recherche.';
+  }
+  statShown.textContent = list.length;
+  pillCount.textContent = list.length;
+}
+
+function applyFilter(){
+  const q = searchInput.value.trim().toLowerCase();
+  const sectorFilter = sectorSelect.value;
+  let filtered = ENTREPRISES;
+  if(currentTab === 'cibles'){
+    filtered = filtered.filter(e => getCRM(e._id).isTarget);
+  }
+  if(sectorFilter){
+    filtered = filtered.filter(e => e.secteur === sectorFilter);
+  }
+  if(filterIT.checked){
+    filtered = filtered.filter(e => getCRM(e._id).departementIT === 'oui');
+  }
+  if(q){
+    filtered = filtered.filter(e =>
+      Object.values(e).some(v => (v || '').toString().toLowerCase().includes(q))
+    );
+  }
+  render(filtered);
+  refreshTabCounts();
+}
+
+function refreshTabCounts(){
+  tabCountAnnuaire.textContent = ENTREPRISES.length;
+  const t = countTargets();
+  tabCountCibles.textContent = t;
+  statTargets.textContent = t;
+}
+
+function switchTab(tab){
+  currentTab = tab;
+  tabAnnuaireBtn.classList.toggle('active', tab === 'annuaire');
+  tabCiblesBtn.classList.toggle('active', tab === 'cibles');
+  applyFilter();
+}
+
+searchInput.addEventListener('input', applyFilter);
+sectorSelect.addEventListener('change', applyFilter);
+filterIT.addEventListener('change', function(){
+  filterITLabel.classList.toggle('active', filterIT.checked);
+  applyFilter();
+});
+
+// ---- Délégation d'événements pour étoile, panneau de suivi, et champs ----
+content.addEventListener('click', function(ev){
+  const star = ev.target.closest('[data-star-id]');
+  if(star){
+    const id = star.getAttribute('data-star-id');
+    const current = getCRM(id).isTarget;
+    setCRM(id, { isTarget: !current });
+    applyFilter();
+    return;
+  }
+  const toggle = ev.target.closest('[data-toggle-id]');
+  if(toggle){
+    const id = toggle.getAttribute('data-toggle-id');
+    const panel = document.getElementById('panel-' + id);
+    if(panel){
+      const willOpen = !panel.classList.contains('open');
+      panel.classList.toggle('open', willOpen);
+      toggle.textContent = willOpen ? 'Suivi de candidature ▴' : 'Suivi de candidature ▾';
+    }
+  }
+});
+
+content.addEventListener('change', function(ev){
+  const field = ev.target.closest('[data-field]');
+  if(!field) return;
+  const id = field.getAttribute('data-id');
+  const key = field.getAttribute('data-field');
+  setCRM(id, { [key]: field.value });
+  const savedTag = document.getElementById('saved-' + id);
+  if(savedTag){
+    savedTag.classList.add('show');
+    setTimeout(() => savedTag.classList.remove('show'), 1200);
+  }
+  if(key === 'priorite' || key === 'statut' || key === 'departementIT'){
+    applyFilter();
+  }
+});
+
+// ---- Export / Import de la sauvegarde CRM (cibles, statuts, notes) ----
+document.getElementById('btn-export').addEventListener('click', function(){
+  const blob = new Blob([JSON.stringify(crm, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'annuaire-crm-sauvegarde.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+document.getElementById('btn-import').addEventListener('click', function(){
+  document.getElementById('file-import').click();
+});
+document.getElementById('file-import').addEventListener('change', function(ev){
+  const file = ev.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(){
+    try{
+      const data = JSON.parse(reader.result);
+      crm = data;
+      saveCRM();
+      applyFilter();
+      alert('Sauvegarde importée avec succès.');
+    }catch(err){
+      alert("Ce fichier n'est pas une sauvegarde valide.");
+    }
+  };
+  reader.readAsText(file);
+  ev.target.value = '';
+});
+
+const uniqueSectors = [...new Set(ENTREPRISES.map(e => e.secteur))];
+const orderedSectors = SECTOR_ORDER.filter(s => uniqueSectors.includes(s)).concat(
+  uniqueSectors.filter(s => !SECTOR_ORDER.includes(s))
+);
+orderedSectors.forEach(s => {
+  const opt = document.createElement('option');
+  opt.value = s;
+  opt.textContent = s;
+  sectorSelect.appendChild(opt);
+});
+
+statTotal.textContent = ENTREPRISES.length;
+coinTotal.textContent = ENTREPRISES.length;
+statSectors.textContent = orderedSectors.length;
+statComplete.textContent = ENTREPRISES.filter(isComplete).length;
+
+async function init(){
+  crm = await loadCRM();
+  refreshTabCounts();
+  render(ENTREPRISES);
+}
+init();
+
+</script>
+</body>
+</html>

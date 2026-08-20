@@ -1,0 +1,9 @@
+{
+  "name": "annuaire-entreprises-rdc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Annuaire des entreprises RDC + suivi de candidature (Netlify Blobs)",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
